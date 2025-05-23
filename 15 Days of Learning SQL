@@ -1,0 +1,44 @@
+WITH 
+RankList AS (
+SELECT submission_date, hacker_id, COUNT(DISTINCT submission_id) AS SubmissionCount, ROW_NUMBER() OVER (PARTITION BY submission_date ORDER BY COUNT(DISTINCT submission_id) DESC, hacker_id ASC) AS rn FROM Submissions GROUP BY submission_date, hacker_id
+), 
+
+TopList AS (
+    SELECT submission_date, hacker_id 
+    FROM RankList
+    WHERE rn = 1
+    ),
+    
+DayRank as (
+    select submission_date,
+           DENSE_RANK() OVER(order by submission_date) as dayRn
+    from submissions
+    GROUP BY submission_date
+),    
+    
+    
+HackerCheck as (
+    SELECT S.submission_date,
+           S.hacker_id,
+           DENSE_RANK() OVER(PARTITION BY S.hacker_id order by S.submission_date) as denrnk,
+           dayRn
+    from submissions S
+    LEFT JOIN DayRank D
+    ON D.submission_date = S.submission_date
+    ),
+
+UniqueHackerCount AS (
+    SELECT H.submission_date, COUNT(DISTINCT H.hacker_id) AS SubmissionCount FROM HackerCheck H
+    WHERE dayRn = denrnk
+    GROUP BY H.submission_date
+
+
+)
+  
+SELECT U.submission_date, U.SubmissionCount, T.hacker_id, H.name FROM UniqueHackerCount U
+LEFT JOIN TopList T
+ON U.submission_date = T.submission_date
+LEFT JOIN Hackers H
+ON T.hacker_id = H.hacker_id
+ORDER BY U.submission_date
+
