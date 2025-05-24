@@ -1,0 +1,16 @@
+WITH 
+ChallengeOrder AS (
+SELECT hacker_id, COUNT(challenge_id) as challenge_count, ROW_NUMBER() OVER (PARTITION BY COUNT(challenge_id) ORDER BY COUNT(challenge_id)) as rn
+    FROM Challenges
+    GROUP BY hacker_id
+),
+RankValue AS (
+SELECT hacker_id, challenge_count, ROW_NUMBER() OVER (ORDER BY challenge_count desc) as rn 
+FROM ChallengeOrder 
+)
+
+SELECT H.hacker_id, H.name, C.challenge_count FROM Hackers H
+RIGHT JOIN ChallengeOrder C
+ON H.hacker_id = C.hacker_id
+WHERE (C.rn >= 1 and C.challenge_count = (SELECT challenge_count from RankValue WHERE rn = 1)) OR (C.rn = 1 and C.challenge_count < (SELECT challenge_count from RankValue WHERE rn = 1))
+ORDER BY challenge_count desc, hacker_id
