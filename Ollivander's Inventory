@@ -1,0 +1,19 @@
+WITH RankedWands AS (
+  SELECT 
+    W.id,
+    WP.age,
+    W.coins_needed,
+    W.power,
+    ROW_NUMBER() OVER (
+      PARTITION BY W.power, WP.age
+      ORDER BY W.coins_needed ASC
+    ) AS rn
+  FROM Wands W
+  JOIN Wands_Property WP ON W.code = WP.code
+  WHERE WP.is_evil = 0
+)
+
+SELECT id, age, coins_needed, power
+FROM RankedWands
+WHERE rn = 1
+ORDER BY power DESC, age DESC;
