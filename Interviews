@@ -1,0 +1,34 @@
+WITH
+TotalViews AS (
+SELECT challenge_id, SUM(total_views) AS TotalViews, SUM(total_unique_views) as TotalUniqueViews 
+    FROM View_Stats 
+    GROUP BY challenge_id
+),
+
+TotalSubs AS (
+SELECT challenge_id, SUM(total_submissions) AS TotalSub, SUM(total_accepted_submissions) as TotalAcceptSub 
+    FROM Submission_Stats  
+    GROUP BY challenge_id
+),
+
+
+
+TotalTable AS (
+SELECT C1.contest_id, SUM(TotalSub) as TotalSub, SUM(TotalAcceptSub) as TotalAcceptSub, SUM(TotalViews) as TotalViews, SUM(TotalUniqueViews) AS TotalUniqueViews FROM Colleges C1
+    LEFT JOIN Challenges C2
+    ON C1.college_id = C2.college_id
+    LEFT JOIN TotalViews V
+    ON C2.challenge_id = V.challenge_id
+    LEFT JOIN TotalSubs S
+    ON C2.challenge_id = S.challenge_id
+    GROUP BY C1.contest_id
+)
+
+
+SELECT C1.contest_id, C1.hacker_id, C1.name, TotalSub, TotalAcceptSub, TotalViews, TotalUniqueViews FROM TotalTable T
+LEFT JOIN Contests C1
+ON C1.contest_id = T.contest_id
+WHERE TotalSub IS NOT NULL AND TotalAcceptSub IS NOT NULL AND TotalViews IS NOT NULL AND TotalUniqueViews IS NOT NULL
+ORDER BY C1.contest_id
+
+
