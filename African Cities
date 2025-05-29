@@ -1,0 +1,4 @@
+SELECT C1.Name FROM City C1
+LEFT JOIN COUNTRY C2
+ON C1.CountryCode = C2.Code
+WHERE C2.Continent = "Africa"
