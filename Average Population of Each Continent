@@ -1,0 +1,5 @@
+SELECT C1.Continent, FLOOR(AVG(C2.Population))  FROM Country C1
+LEFT JOIN City C2
+ON C1.Code = C2.CountryCode
+GROUP BY C1.Continent
+HAVING FLOOR(AVG(C2.Population)) IS NOT NULL
