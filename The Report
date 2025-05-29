@@ -1,0 +1,19 @@
+SELECT Name, StudentGrades, Marks
+FROM (SELECT 
+    CASE 
+        WHEN Marks <70 THEN NULL ELSE Name END AS Name, 
+    Marks, 
+    CASE
+        WHEN Marks >= 0  and Marks <= 9 then 1
+        WHEN Marks >= 10  and Marks <= 19 then 2
+        WHEN Marks >= 20  and Marks <= 29 then 3
+        WHEN Marks >= 30  and Marks <= 39 then 4
+        WHEN Marks >= 40  and Marks <= 49 then 5
+        WHEN Marks >= 50  and Marks <= 59 then 6
+        WHEN Marks >= 60  and Marks <= 69 then 7
+        WHEN Marks >= 70  and Marks <= 79 then 8
+        WHEN Marks >= 80  and Marks <= 89 then 9
+        WHEN Marks >= 90  and Marks <= 100 then 10 
+        ELSE 0 
+    END AS StudentGrades FROM Students) AS Graded
+ORDER BY StudentGrades desc, Name asc
