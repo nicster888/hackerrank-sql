@@ -1,0 +1,6 @@
+SELECT CASE
+WHEN (C > A and C > B and C >= A+B) OR (B > A and B > C and B >= C+A) OR (A > B and A > C and  A >= C+B) then "Not A Triangle"
+WHEN A = B and A = C and B = C then "Equilateral"
+WHEN A = B or A = C or B=C then "Isosceles"
+WHEN A != B and A != C and B != C then "Scalene" END AS Description
+FROM TRIANGLES
