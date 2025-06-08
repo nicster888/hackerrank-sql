@@ -1,4 +1,4 @@
 SELECT 
-    STR(SUM(LAT_N), 12, 2) AS Total_Latitude,
-    STR(SUM(LONG_W), 12, 2) AS Total_Longitude
-FROM STATION;
+    CAST(ROUND(SUM(LAT_N), 2) AS DECIMAL(18,2)) AS Total_Latitude,
+    CAST(ROUND(SUM(LONG_W), 2) AS DECIMAL(18,2)) AS Total_Longitude
+FROM STATION
